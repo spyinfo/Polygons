@@ -5,26 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Polygons"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="409.297" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        Title="Polygon" Height="450" Width="452.63" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid Margin="0,0,2,0">
-        <ListView x:Name="ListView" HorizontalAlignment="Left" Height="343" Margin="10,10,0,0" VerticalAlignment="Top" Width="379">
+        <ListView x:Name="ListView" HorizontalAlignment="Center" Height="343" Margin="10,10,5,0" VerticalAlignment="Top" Width="430" FontSize="16" HorizontalContentAlignment="Center">
             <ListView.View>
                 <GridView>
                     <GridViewColumn   
                         Header="Кол-во вершин"
-                        Width="110"
+                        Width="125"
                         DisplayMemberBinding="{Binding Path=CountOfPoints}"/>
                     <GridViewColumn
                         Header="Периметр"
-                        Width="135"
+                        Width="155"
                         DisplayMemberBinding="{Binding Path=Perimeter}"/>
                     <GridViewColumn
                         Header="Площадь"
-                        Width="130"/>
+                        Width="140"
+                        DisplayMemberBinding="{Binding Path=Square}"/>
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button Content="Выбрать файл" HorizontalAlignment="Left" Margin="150,365,0,0" VerticalAlignment="Top" Width="107" Height="25" Background="#FF33C98B" Click="ChooseFile_Click"/>
+        <Button Content="Выбрать файл" HorizontalAlignment="Left" Margin="168,367,0,0" VerticalAlignment="Top" Width="107" Height="25" Background="#FF33C98B" Click="ChooseFile_Click"/>
 
     </Grid>
 </Window>

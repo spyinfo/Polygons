@@ -19,9 +19,9 @@ namespace Polygons
 {
     class Polygon
     {
-        public int CountOfPoints { get; set; }
-        public int Perimeter { get; set; }
-        public int Square { get; set; }
+        public string CountOfPoints { get; set; }
+        public string Perimeter { get; set; }
+        public string Square { get; set; }
     }
 
 
@@ -41,12 +41,17 @@ namespace Polygons
             var openFileDialog = new OpenFileDialog();
             var list = new List<Polygon>();
             string[] numbers;
-            int perimeter;
+            double perimeter;
             Polygon polygon;
 
             if (openFileDialog.ShowDialog() == true)
             {
-                MessageBox.Show(openFileDialog.FileName);
+                //MessageBox.Show(openFileDialog.FileName, "Файл");
+                MessageBox.Show("Числа в файле должны быть" 
+                                + Environment.NewLine
+                                + "записаны в следующем формате:"
+                                + Environment.NewLine
+                                + "x1 y1 x2 y2 x3 y3", "Формат");
             }
             
 
@@ -54,29 +59,46 @@ namespace Polygons
             {
                 while (!streamReader.EndOfStream)
                 {
-                    string str = streamReader.ReadLine();
-                    perimeter = 0;
+                    string str = streamReader.ReadLine(); // читаем 1 строку
+                    perimeter = 0; // обнуляем периметр для нового многоугольника
 
-                    numbers = str.Split(' ');
-                    
+                    numbers = str.Split(' '); 
 
-                    for (int i = 0; i <= numbers.Length; i += 2)
+                    if ((numbers.Length >= 3) && (numbers.Length % 2 == 0)) // если количество вершин > 1 и нечетные
                     {
-                        int numberInt = int.Parse(numbers[i]);
-                        perimeter += numberInt;
+                        for (int i = 0; i <= (numbers.Length - 3); i += 2)
+                        {
+                            int numberX1 = int.Parse(numbers[i]);
+                            int numberY1 = int.Parse(numbers[i + 1]);
+
+                            int numberX2 = int.Parse(numbers[i + 2]);
+                            int numberY2 = int.Parse(numbers[i + 3]);
+
+                            double distance = Math.Sqrt(((numberX2 - numberX1) * (numberX2 - numberX1)) + ((numberY2 - numberY1) * (numberY2 - numberY1)));
+
+                            perimeter += distance;
+                        }
+
+                        polygon = new Polygon()
+                        {
+                            CountOfPoints = Convert.ToString(numbers.Length / 2),
+                            Perimeter = Convert.ToString(perimeter)
+                        };
+
+                        list.Add(polygon);
+                    }                  
+
+                    else
+                    {
+                        polygon = new Polygon()
+                        {
+                            CountOfPoints = "Ошибка",
+                            Perimeter = "Ошибка",
+                            Square = "Ошибка"
+                        };
+                        list.Add(polygon);
                     }
-
-                    polygon = new Polygon()
-                    {
-                        CountOfPoints = (numbers.Length / 2) + 1,
-                        Perimeter = perimeter
-                    };
-
-                    list.Add(polygon);
-
                 }
-
-
             }
             ListView.ItemsSource = list;
         }
