@@ -7,6 +7,8 @@
         mc:Ignorable="d"
         Title="Polygon" Height="450" Width="452.63" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid Margin="0,0,2,0">
+        
+        <!--ListView-->
         <ListView x:Name="ListView" HorizontalAlignment="Center" Height="343" Margin="10,10,5,0" VerticalAlignment="Top" Width="430" FontSize="16" HorizontalContentAlignment="Center">
             <ListView.View>
                 <GridView>
@@ -25,6 +27,8 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        
+        <!--Кнопка-->
         <Button Content="Выбрать файл" HorizontalAlignment="Left" Margin="168,367,0,0" VerticalAlignment="Top" Width="107" Height="25" Background="#FF33C98B" Click="ChooseFile_Click"/>
 
     </Grid>
