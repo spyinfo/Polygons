@@ -13,8 +13,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.IO;
 
@@ -25,9 +35,9 @@ namespace Polygons
     /// </summary>
     class Polygon
     {
-        public string CountOfPoints { get; set; }
-        public string Perimeter { get; set; }
-        public string Square { get; set; }
+        public string CountOfPoints { get; set; } // количество вершин
+        public string Perimeter { get; set; } // периметр
+        public string Square { get; set; } // площадь
     }
 
 
@@ -42,6 +52,9 @@ namespace Polygons
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Кнопка "Выбрать файл"
+        /// </summary>
         private void ChooseFile_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog();
@@ -56,54 +69,73 @@ namespace Polygons
                                 + Environment.NewLine
                                 + "записаны в следующем формате:"
                                 + Environment.NewLine
-                                + "x1 y1 x2 y2 x3 y3", "Формат");
+                                + "X1 Y1 X2 Y2 X3 Y3", "Формат");
             }
 
             try
             {
-                using (var streamReader = new StreamReader(openFileDialog.FileName)) // открываем файл на чтения
+                using (var streamReader = new StreamReader(openFileDialog.FileName)) // открываем файл на чтение
                 {
                     while (!streamReader.EndOfStream)
                     {
                         string str = streamReader.ReadLine(); // читаем 1 строку
                         perimeter = 0; // обнуляем периметр для нового многоугольника
 
+                        int X1 = 0;
+                        int X2 = 0;
+                        int Y1 = 0;
+                        int Y2 = 0;
+
                         numbers = str.Split(' ');  // добавляем каждую коориднату в массив с помощью Split
 
                         if ((numbers.Length >= 3) && (numbers.Length % 2 == 0)) // если количество вершин >=3 и количество вершин четное количество
                         {
-
-                            for (byte i = 0; i <= (numbers.Length - 3); i += 2) // находим периметр
+                            for (int i = 0; i <= (numbers.Length - 3); i += 2) // находим периметр
                             {
-                                int numberX1 = int.Parse(numbers[i]);
-                                int numberY1 = int.Parse(numbers[i + 1]);
+                                X1 = int.Parse(numbers[i]);
+                                Y1 = int.Parse(numbers[i + 1]);
 
-                                int numberX2 = int.Parse(numbers[i + 2]);
-                                int numberY2 = int.Parse(numbers[i + 3]);
+                                X2 = int.Parse(numbers[i + 2]);
+                                Y2 = int.Parse(numbers[i + 3]);
 
-                                double distance = Math.Sqrt(((numberX2 - numberX1) * (numberX2 - numberX1)) + ((numberY2 - numberY1) * (numberY2 - numberY1))); // длина 
+                                double distance = Math.Sqrt(Math.Pow((X2 - X1), 2) + Math.Pow((Y2 - Y1), 2)); // длина отрезка (стороны)
 
                                 perimeter += distance;
                             }
 
-                            // переменные для нахожения площади многоугольника
-                            int x1 = int.Parse(numbers[0]);
-                            int y1 = int.Parse(numbers[1]);
-                            double sum = 0;
-                            int x2 = 0;
-                            int y2 = 0;
+                            perimeter += Math.Sqrt(Math.Pow(X2 - int.Parse(numbers[0]), 2) + Math.Pow((Y2 - int.Parse(numbers[1])),2));
 
-                            for (byte i = 0; i < (numbers.Length - 4); i++) // находим площадь
+                            // переменные для нахожения площади многоугольника
+                            double sum = 0;
+
+                            for (int i = 0; i <= (numbers.Length - 4); i++) // находим площадь
                             {
-                                x2 = int.Parse(numbers[i + 2]);
-                                y2 = int.Parse(numbers[i + 3]);
-                                sum += (x1 + x2) * (y2 - y1);
-                                x1 = x2;
-                                y1 = y2;
+                                X1 = int.Parse(numbers[i]);
+                                Y1 = int.Parse(numbers[i + 1]);
+
+                                X2 = int.Parse(numbers[i + 2]);
+                                Y2 = int.Parse(numbers[i + 3]);
+
+                                sum += X1 * Y2 - X2 * Y1;
                             }
 
-                            sum += (int.Parse(numbers[0]) + x2) * (int.Parse(numbers[1]) - y2);
+                            //int Y = int.Parse(numbers[3]);
 
+                            //for (int i = 0; i <= (numbers.Length - 4); i += 2)
+                            //{
+                            //    int X = int.Parse(numbers[i]);
+                            //    sum1 += X * Y;
+                            //    Y = int.Parse(numbers[i + 2]);
+                            //}
+
+                            //int x1 = int.Parse(numbers[2]);
+
+                            //for (int i = 1; i <= (numbers.Length - 4); i += 2)
+                            //{
+                            //    int y1 = int.Parse(numbers[i]);
+                            //    sum2 += y1 * x1;
+                            //    x1 = int.Parse(numbers[i + 2]);
+                            //}
 
 
                             polygon = new Polygon()
@@ -129,11 +161,41 @@ namespace Polygons
                     }
                 }
             }
+            // обработка исключений
+            catch (System.OverflowException)
+            {
+                MessageBox.Show("Скорее всего произошло переполнение!");
+                list = null; // обнуляем список
+            }
+
+            catch (System.FormatException)
+            {
+                MessageBox.Show("Файл не является текстовым!");
+                list = null; 
+            }
+
             catch (System.ArgumentException)
             {
                 MessageBox.Show("Вы не выбрали файл!");
             }
+
+            catch (DirectoryNotFoundException)
+            {
+                MessageBox.Show("Директория не найдена!");
+            }
+
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show("Файл не найден!");
+            }
+
+            catch (IOException)
+            {
+                MessageBox.Show("Ошибка при вводе-выводе");
+            }
+
             ListView.ItemsSource = list;
+
         }
     }
 }
